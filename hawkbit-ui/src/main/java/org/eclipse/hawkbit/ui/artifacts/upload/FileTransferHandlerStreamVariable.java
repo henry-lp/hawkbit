@@ -80,24 +80,24 @@ public class FileTransferHandlerStreamVariable extends AbstractFileTransferHandl
         if (isUploadInterrupted()) {
             return ByteStreams.nullOutputStream();
         }
-
-        // we return the outputstream so we cannot close it here
-        @SuppressWarnings("squid:S2095")
-        final PipedOutputStream outputStream = new PipedOutputStream();
-        PipedInputStream inputStream = null;
-        try {
-            inputStream = new PipedInputStream(outputStream);
-            publishUploadProgressEvent(fileUploadId, 0, fileSize);
-            startTransferToRepositoryThread(inputStream, fileUploadId, mimeType);
-        } catch (final IOException e) {
-            LOG.warn("Creating piped Stream failed {}.", e);
-            tryToCloseIOStream(outputStream);
-            tryToCloseIOStream(inputStream);
-            interruptUploadDueToUploadFailed();
-            publishUploadFailedAndFinishedEvent(fileUploadId);
-            return ByteStreams.nullOutputStream();
-        }
-        return outputStream;
+		try (// we return the outputstream so we cannot close it here
+		@java.lang.SuppressWarnings("squid:S2095")
+		final java.io.PipedOutputStream outputStream = new java.io.PipedOutputStream()) {
+			java.io.PipedInputStream inputStream = null;
+			try {
+				inputStream = new java.io.PipedInputStream(outputStream);
+				publishUploadProgressEvent(fileUploadId, 0, fileSize);
+				startTransferToRepositoryThread(inputStream, fileUploadId, mimeType);
+			} catch (final java.io.IOException e) {
+				org.eclipse.hawkbit.ui.artifacts.upload.FileTransferHandlerStreamVariable.LOG.warn("Creating piped Stream failed {}.", e);
+				org.eclipse.hawkbit.ui.artifacts.upload.AbstractFileTransferHandler.tryToCloseIOStream(outputStream);
+				org.eclipse.hawkbit.ui.artifacts.upload.AbstractFileTransferHandler.tryToCloseIOStream(inputStream);
+				interruptUploadDueToUploadFailed();
+				publishUploadFailedAndFinishedEvent(fileUploadId);
+				return com.google.common.io.ByteStreams.nullOutputStream();
+			}
+			return outputStream;
+		}
     }
 
     /**
